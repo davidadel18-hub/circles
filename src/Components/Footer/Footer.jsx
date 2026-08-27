@@ -16,7 +16,7 @@ export default function Footer() {
           {/* العمود الأول: اسم التطبيق والبايو التعريفي */}
           <div className="md:col-span-1 space-y-3">
             <Link to="/" className="text-xl font-black tracking-wider text-[#00F2FE] drop-shadow-[0_0_6px_rgba(0,242,254,0.4)]">
-              Next.Generation
+              Circles...
             </Link>
             <p className="text-xs text-gray-400 leading-relaxed font-medium max-w-sm mx-auto md:mx-0">
               Just connected with your real circle! Experience the next era of decentralized tech space built for modern cyber creators.
