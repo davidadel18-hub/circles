@@ -1,0 +1,7 @@
+.active {
+  color: #FF0050;
+  border-bottom-width: 2px;
+  border-bottom-style: solid;
+  border-bottom-color: #FF0050;
+  padding-bottom: 0.25rem; /* ما يعادل pb-1 في تيلويند */
+}
