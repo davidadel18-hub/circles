@@ -87,17 +87,7 @@ const user = data?.data?.data?.user
                             </div>
                         </div>
 
-                        <div className="flex-shrink-0 flex justify-center mb-2">
-                            <Link to={'/edit-profile'}
-                                type="button"
-                                className="px-5 py-2 bg-[#FF0050]/10 text-[#FF0050] border border-[#FF0050]/40 hover:bg-[#FF0050] hover:text-white rounded-xl text-xs sm:text-sm font-bold shadow-[0_0_15px_rgba(255,0,80,0.1)] transition-all duration-200 active:scale-95"
-                            >
-                                Edit Profile
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-
+                       
                 {/* قسم العدادات والإحصائيات الرقمية (Metrics Bar) */}
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
                     <div className="grid grid-cols-3 gap-2 bg-[#1A0B2E]/60 border border-[#00F2FE]/10 rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center backdrop-blur-md">
