@@ -1,30 +1,31 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import CreatePost from '../CreatePost/CreatePost';
 import UserTimeline from '../UserTimeline/UserTimeline';
 
 export default function UsersProfile() {
-
-   let params =  useParams()
-
-  // استخراج داتا المستخدم باختصار
-  function getUserApi(){
-      return axios.get(`https://route-posts.routemisr.com/users/${params.id}/profile` , {headers:{Authorization:`Bearer ${localStorage.getItem('token')}`}})
-    }
-    
-
-let {data , isLoading} = useQuery({
-    queryKey:['getUserProfile' , params.id] ,
-    queryFn:getUserApi
-})
-const user = data?.data?.data?.user
+    const params = useParams();
     const [activeFullImg, setActiveFullImg] = useState(null);
+
+    // استخراج داتا المستخدم باختصار
+    function getUserApi() {
+        return axios.get(`https://route-posts.routemisr.com/users/${params.id}/profile`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        });
+    }
+
+    const { data, isLoading } = useQuery({
+        queryKey: ['getUserProfile', params.id],
+        queryFn: getUserApi
+    });
+
+    const user = data?.data?.data?.user;
+
     let formattedDate = user?.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString('en-US', {
         year: 'numeric', month: 'long', day: 'numeric',
     }) : "No birth date provided";
-  
 
     console.log(user);
 
@@ -40,7 +41,6 @@ const user = data?.data?.data?.user
 
     return (
         <>
-
             <div className="w-full bg-[#1A0B2E] text-[#FFFFFF] min-h-[calc(100vh-4rem)] pb-12 relative" dir="ltr">
 
                 {/* قسم الهيدر / الغلاف والصورة الشخصية */}
@@ -86,8 +86,9 @@ const user = data?.data?.data?.user
                                 </p>
                             </div>
                         </div>
+                    </div>
+                </div>
 
-                       
                 {/* قسم العدادات والإحصائيات الرقمية (Metrics Bar) */}
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
                     <div className="grid grid-cols-3 gap-2 bg-[#1A0B2E]/60 border border-[#00F2FE]/10 rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center backdrop-blur-md">
@@ -114,41 +115,21 @@ const user = data?.data?.data?.user
                             <div className="h-[2px] bg-gradient-to-r from-[#00F2FE] to-transparent flex-1 rounded"></div>
                         </div>
 
-                        
                         <UserTimeline userId={user?.id} />
                     </div>
                 </div>
 
-            </div>
-
-            {/* 🎯 3. مودال نيون ديناميكي موحد: يفتح لعرض أي صورة (Cover أو Profile) يتم الضغط عليها */}
-            {activeFullImg && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                    {/* الخلفية الزجاجية الداكنة لإغلاق المودال عند الضغط عليها */}
-                    <div className="absolute inset-0 bg-black/85 backdrop-blur-md" onClick={() => setActiveFullImg(null)}></div>
-
-                    {/* كارت عرض الميديا النيون */}
-                    <div className="relative z-10 max-w-2xl w-full bg-[#1A0B2E] border border-[#00F2FE]/40 rounded-2xl overflow-hidden shadow-[0_0_4px_rgba(0,242,254,0.3)] p-3 flex flex-col items-center animate-fade-in">
-
-                        {/* زر الإغلاق */}
-                        <button
-                            onClick={() => setActiveFullImg(null)}
-                            className="absolute top-4 right-4 bg-black/60 hover:bg-[#FF0050] text-white p-2 rounded-full transition-colors z-20"
-                        >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-
-                        {/* عرض الصورة كاملة بنوع object-contain لمنع أي تشوه للأبعاد الأصلية */}
-                        <div className="w-full max-h-[75vh] rounded-xl overflow-hidden bg-[#0F051D] flex items-center justify-center">
-                            <img src={activeFullImg} alt="Full View" className="w-full h-full object-contain" />
+                {/* نافذة عرض الصورة بالحجم الكامل إذا كانت مفعلة */}
+                {activeFullImg && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4" onClick={() => setActiveFullImg(null)}>
+                        <div className="relative max-w-4xl max-h-full">
+                            <img src={activeFullImg} alt="Full view" className="max-w-full max-h-[85vh] object-contain rounded" />
+                            <button className="absolute -top-10 right-0 text-white text-xl font-bold">✕ Close</button>
                         </div>
-
-                        <h3 className="text-xs font-bold text-[#00F2FE] mt-3 tracking-wide">⚡ Media Full View</h3>
                     </div>
-                </div>
-            )}
+                )}
+
+            </div>
         </>
-    )
+    );
 }
