@@ -105,26 +105,27 @@ export default function Register() {
             </div>
 
             {/* Date of Birth */}
-            <div className="flex flex-col text-left">
-              <label htmlFor="dateOfBirth" className="block text-xs font-medium text-gray-400 mb-1 px-1">Date of Birth</label>
-              <input 
-                id="dateOfBirth"
-                {...register('dateOfBirth', {
-                  required: 'your age is required',
-                  validate: (value) => {
-                    if (!value) return 'your age is required';
-                    let currentYear = new Date().getFullYear();
-                    let userYear = new Date(value).getFullYear();
-                    let userAge = currentYear - userYear;
-                    return userAge > 20 || 'age must be more than 20';
-                  }
-                })} 
-                type="date" 
-                className={inputStyle} 
-                style={{ colorScheme: 'dark' }} 
-              />
-              {formState.errors.dateOfBirth && <div className='text-center text-red-500 font-medium text-sm mt-1'>{formState.errors.dateOfBirth.message}</div>}
-            </div>
+<div className="flex flex-col text-left">
+  <label htmlFor="dateOfBirth" className="text-xs font-medium text-gray-400 mb-1 px-1">Date of Birth</label>
+  <input 
+    id="dateOfBirth"
+    {...register('dateOfBirth', {
+      required: 'your age is required',
+      validate: (value) => {
+        if (!value) return 'your age is required';
+        let currentYear = new Date().getFullYear();
+        let userYear = new Date(value).getFullYear();
+        let userAge = currentYear - userYear;
+        return userAge > 20 || 'age must be more than 20';
+      }
+    })} 
+    type="date" 
+    /* قمنا بإضافة كلاسات مخصصة تضمن تلوين نصوص وأيقونة التاريخ الافتراضية باللون الأبيض/الرمادي لتظهر بوضوح */
+    className="w-full my-1 block px-3 py-2.5 bg-transparent border border-[#00F2FE]/30 rounded-xl text-white outline-none focus:border-[#12506C] focus:ring-1 focus:ring-[#12506C] transition-all placeholder:text-gray-500 text-left [color-scheme:dark] [&::-webkit-datetime-edit]:text-gray-300 [&::-webkit-calendar-picker-indicator]:invert" 
+  />
+  {formState.errors.dateOfBirth && <div className='text-center text-red-500 font-medium text-sm mt-1'>{formState.errors.dateOfBirth.message}</div>}
+</div>
+
 
             {/* Gender */}
             <div>
