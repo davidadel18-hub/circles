@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom';
 import TopComment from '../TopComment/TopComment';
 import AllComments from '../AllComments/AllComments';
@@ -27,6 +27,14 @@ export default function PostCard({ post, manyComments = false, profile = false }
   });
 
 
+useEffect(() => {
+  setLiked(post?.likes?.includes(myId) || false);
+}, [post?.likes, myId]); // أول ما مصفوفة اللايكات تتغير من السيرفر، الـ state هتحدث نفسها تلقائي
+
+
+
+
+
   console.log(post._id);
   let query = useQueryClient()
   // حالة التحكم في فتح وإغلاق القائمة المنسدلة للثلاث نقاط
@@ -49,27 +57,36 @@ export default function PostCard({ post, manyComments = false, profile = false }
   }
 
   // 2. كائن الـ Mutation للتحكم في الطلب وإعادة إنعاش كاش المنشورات
-  let { mutate: toggleLike, data: toggleData } = useMutation({
-    mutationFn: likeAndUnlikeApi,
-    onSuccess: (response) => {
-      // 1. تحديث العدادات وإعادة جلب المنشورات لضمان دقة الأرقام
-      query.invalidateQueries({ queryKey: ['getPosts'] });
-      query.invalidateQueries({ queryKey: ['getUserPosts'] });
+ let { mutate: toggleLike } = useMutation({
+  mutationFn: likeAndUnlikeApi,
+  
+  // 1. أول ما يدوس: بنحدث الـ UI فوراً وبنعكس العداد بمقدار 1 فقط
+  onMutate: async () => {
+    setLiked((prev) => {
+      const newStatus = !prev;
+      // لو عندك State لعداد اللايكات برة، حدثه هنا بناءً على الـ newStatus
+      // setLikesCount(prevCount => newStatus ? prevCount + 1 : prevCount - 1);
+      return newStatus;
+    });
+  },
 
-      // 2. قراءة القيمة من المسار الصحيح الموضح في رد السيرفر المرفق
-      const currentLikeStatus = response?.data?.data?.liked;
+  onSuccess: () => {
+    // 2. بنعمل إنعاش للكاش عشان الأرقام والبيانات تتحدث بدقة من السيرفر
+    query.invalidateQueries({ queryKey: ['getPosts'] });
+    query.invalidateQueries({ queryKey: ['getUserPosts'] });
+  },
 
-      if (currentLikeStatus !== undefined) {
-        setLiked(currentLikeStatus);
-      }
-    }
-    ,
-    onError: (err) => {
-      console.error("Like toggle failed:", err.response?.data);
-    }
-  });
-  console.log("My ID from Token:", myId);
-  console.log("Post Likes Array:", post?.likes);
+  onError: (err) => {
+    // 3. لو السيرفر وقع أو حصل مشكلة، بنرجع الـ UI للحالة القديمة تلقائياً (Rollback)
+    setLiked((prev) => {
+      const oldStatus = !prev;
+      // setLikesCount(prevCount => oldStatus ? prevCount + 1 : prevCount - 1);
+      return oldStatus;
+    });
+    console.error("Like toggle failed:", err.response?.data);
+  }
+});
+
 
 
   function getPostComments() {
@@ -89,7 +106,7 @@ export default function PostCard({ post, manyComments = false, profile = false }
   // Format the main post creation date nicely
   const formattedDate = new Date(createdAt).toLocaleDateString('en-US', {
     year: 'numeric',
-    month: 'long',
+    month: 'short',
     day: 'numeric',
     hour: 'numeric',
     minute: 'numeric'
@@ -290,24 +307,24 @@ export default function PostCard({ post, manyComments = false, profile = false }
         </div>
 
         {/* Interactive Like Toggler Button */}
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation(); // 🎯 تمنع الضغطة من فتح صفحة تفاصيل البوست
+       <button
+  type="button"
+  onClick={(e) => {
+    e.stopPropagation(); // 🎯 تمنع الضغطة من فتح صفحة تفاصيل البوست
+    // إرسال الطلب الفوري للسيرفر والـ Mutation هيهندل الباقي محلياً وسيرفر
+    toggleLike(post?._id);
+  }}
+  className={`p-1.5 sm:p-2 rounded-full transition-all duration-200 focus:outline-none active:scale-90 ${
+    liked 
+      ? 'text-[#FF0050] bg-[#FF0050]/10 shadow-[0_0_10px_rgba(255,0,80,0.2)]' 
+      : 'text-[#94A3B8] hover:bg-[#00F2FE]/10 hover:text-[#00F2FE]'
+  }`}
+>
+  <svg className="w-5 h-5" fill={liked ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+  </svg>
+</button>
 
-            // 1. تحديث الـ UI محلياً فوراً ليشعر المستخدم بالسرعة (Optimistic UI)
-
-
-            // 2. إرسال الطلب الفوري للسيرفر باستخدام الـ ID الصحيح للبوست الحالي
-            toggleLike(post._id);
-          }}
-          className={`p-1.5 sm:p-2 rounded-full transition-all duration-200 focus:outline-none active:scale-90 ${liked ? 'text-[#FF0050] bg-[#FF0050]/10 shadow-[0_0_10px_rgba(255,0,80,0.2)]' : 'text-[#94A3B8] hover:bg-[#00F2FE]/10 hover:text-[#00F2FE]'
-            }`}
-        >
-          <svg className="w-5 h-5" fill={liked ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-          </svg>
-        </button>
       </div>
 
       {/* Conditionally Rendered Top Comment Box */}
