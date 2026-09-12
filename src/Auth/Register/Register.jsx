@@ -85,24 +85,24 @@ export default function Register() {
             </div>
 
             {/* Date of Birth */}
-            <div>
-              <Input 
-                {...register('dateOfBirth', {
-                  required: 'your age is required',
-                  validate: (value) => {
-                    if (!value) return 'your age is required';
-                    let currentYear = new Date().getFullYear();
-                    let userYear = new Date(value).getFullYear();
-                    let userAge = currentYear - userYear;
-                    return userAge > 20 || 'age must be more than 20';
-                  }
-                })} 
-                type='date' 
-                aria-label="dateOfBirth" 
-                className="w-full my-1" 
-              />
-              {formState.errors.dateOfBirth && <div className='text-center text-red-500 font-medium text-sm mt-1'>{formState.errors.dateOfBirth.message}</div>}
-            </div>
+         <Input 
+  {...register('dateOfBirth', {
+    required: 'your age is required',
+    validate: (value) => {
+      if (!value) return 'your age is required';
+      let currentYear = new Date().getFullYear();
+      let userYear = new Date(value).getFullYear();
+      let userAge = currentYear - userYear;
+      return userAge > 20 || 'age must be more than 20';
+    }
+  })} 
+  type='date' 
+  aria-label="dateOfBirth" 
+  className="w-full my-1 block appearance-none" 
+  // هذا السطر يضمن ظهور أيقونة اختيار التاريخ في متصفحات الكروم وإيدج
+  style={{ colorScheme: 'light' }} 
+/>
+
 
             {/* Gender */}
             <div>
