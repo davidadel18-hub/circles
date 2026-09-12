@@ -85,23 +85,44 @@ export default function Register() {
             </div>
 
             {/* Date of Birth */}
-         <Input 
-  {...register('dateOfBirth', {
-    required: 'your age is required',
-    validate: (value) => {
-      if (!value) return 'your age is required';
-      let currentYear = new Date().getFullYear();
-      let userYear = new Date(value).getFullYear();
-      let userAge = currentYear - userYear;
-      return userAge > 20 || 'age must be more than 20';
-    }
-  })} 
-  type='date' 
-  aria-label="dateOfBirth" 
-  className="w-full my-1 block appearance-none" 
-  // هذا السطر يضمن ظهور أيقونة اختيار التاريخ في متصفحات الكروم وإيدج
-  style={{ colorScheme: 'light' }} 
-/>
+         <div>
+  <Input 
+    {...register('dateOfBirth', {
+      required: 'your age is required',
+      validate: (value) => {
+        if (!value) return 'your age is required';
+        let currentYear = new Date().getFullYear();
+        let userYear = new Date(value).getFullYear();
+        let userAge = currentYear - userYear;
+        return userAge > 20 || 'age must be more than 20';
+      }
+    })} 
+    // يبدأ كحقل نصي عادي على الموبايل لإظهار الـ placeholder
+    type="text" 
+    placeholder="Date of Birth (dd/mm/yyyy)"
+    aria-label="dateOfBirth" 
+    className="w-full my-1 block" 
+    
+    // عندما يضغط المستخدم عليه (Focus) يتحول فوراً لـ date ويفتح التقويم
+    onFocus={(e) => {
+      e.target.type = 'date';
+      e.target.showPicker?.(); // يفتح التقويم تلقائياً على أندرويد وكروم
+    }}
+    
+    // إذا تركه فارغاً يعود كحقل نصي ليظهر النص مجدداً
+    onBlur={(e) => {
+      if (!e.target.value) {
+        e.target.type = 'text';
+      }
+    }}
+    style={{ colorScheme: 'light' }} 
+  />
+  {formState.errors.dateOfBirth && (
+    <div className='text-center text-red-500 font-medium text-sm mt-1'>
+      {formState.errors.dateOfBirth.message}
+    </div>
+  )}
+</div>
 
 
             {/* Gender */}
