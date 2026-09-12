@@ -1,7 +1,6 @@
 import React, { useContext, useState } from 'react';
-import { Button } from '@heroui/react';
+import { Button } from '@heroui/react'; // تركنا الزر فقط من هيرو يو آي للحفاظ على شكله الاحترافي
 import { useNavigate } from 'react-router-dom';
-import { Input } from "@heroui/react";
 import { useForm } from "react-hook-form";
 import axios from 'axios';
 import { AuthContext } from '../../Context/AuthContext';
@@ -33,13 +32,12 @@ export default function Register() {
     setApiTrue('');
     setLoading(true);
 
-    // Copy data to modify dateOfBirth back to ISO format string safely
     const payload = { ...userData };
     if (payload.dateOfBirth) {
       payload.dateOfBirth = new Date(payload.dateOfBirth).toISOString();
     }
 
-    axios.post('https://route-posts.routemisr.com/users/signup', payload)
+    axios.post('https://routemisr.com', payload)
       .then((response) => {
         console.log(response.data.message); 
         setApiTrue(response.data.message); 
@@ -58,6 +56,9 @@ export default function Register() {
       });
   }
 
+  // الـ classes المشتركة لتوحيد شكل كل الحقول وتناسقها عند الـ Focus
+  const inputStyle = "w-full my-1 block px-3 py-2.5 bg-transparent border border-[#00F2FE]/30 rounded-xl text-white outline-none focus:border-[#12506C] focus:ring-1 focus:ring-[#12506C] transition-all placeholder:text-gray-500 text-left";
+
   return (
     <>
       <div className='bg-[#1A0B2E] text-[#FFFFFF] flex justify-center p-5 min-h-[calc(100vh-4rem)] items-center'>
@@ -66,64 +67,64 @@ export default function Register() {
           
           <form className='container mx-auto space-y-4' onSubmit={handleSubmit(submitForm)}>
             
-            {/* Name */}
-            <div>
-              <Input {...register('name', { required: 'name is required', minLength: { value: 4, message: 'min 4 letters' }, maxLength: { value: 30, message: 'max 30 letters' } })} type='text' aria-label="Name" className="w-full my-1" placeholder="Enter your name" />
-              {formState.errors.name && <div className='text-center text-red-500 font-medium text-sm mt-1'>{formState.errors.name.message}</div>}
-            </div>
+           {/* Name */}
+<div className="flex flex-col text-left">
+  <label htmlFor="name" className="text-xs font-medium text-gray-400 mb-1 px-1">Name</label>
+  <input 
+    id="name" 
+    {...register('name', { 
+      required: 'name is required', 
+      minLength: { value: 4, message: 'min 4 letters' }, 
+      maxLength: { value: 30, message: 'max 30 letters' },
+      // تم إضافة شرط قبول الحروف العربية والإنجليزية والمسافات فقط هنا
+      pattern: {
+        value: /^[a-zA-Z\u0600-\u06FF\s]+$/,
+        message: 'Name must contain letters only (no numbers or special characters)'
+      }
+    })} 
+    type='text' 
+    className={inputStyle} 
+    placeholder="Enter your name" 
+  />
+  {formState.errors.name && <div className='text-center text-red-500 font-medium text-sm mt-1'>{formState.errors.name.message}</div>}
+</div>
+
 
             {/* Username */}
-            <div>
-              <Input {...register('username', { required: 'user name is required', minLength: { value: 5, message: 'min 5 letters' }, maxLength: { value: 30, message: 'max 30 letters' } })} type='text' aria-label="User Name" className="w-full my-1" placeholder="Enter your user name" />
+            <div className="flex flex-col text-left">
+              <label htmlFor="username" className="text-xs font-medium text-gray-400 mb-1 px-1">Username</label>
+              <input id="username" {...register('username', { required: 'user name is required', minLength: { value: 5, message: 'min 5 letters' }, maxLength: { value: 30, message: 'max 30 letters' } })} type='text' className={inputStyle} placeholder="Enter your user name" />
               {formState.errors.username && <div className='text-center text-red-500 font-medium text-sm mt-1'>{formState.errors.username.message}</div>}
             </div>
 
             {/* Email */}
-            <div>
-              <Input {...register('email', { required: 'email is required', pattern: { value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, message: 'Please enter a valid email address' } })} type='email' aria-label="Email" className="w-full my-1" placeholder="Enter your user email" />
+            <div className="flex flex-col text-left">
+              <label htmlFor="email" className="text-xs font-medium text-gray-400 mb-1 px-1">Email</label>
+              <input id="email" {...register('email', { required: 'email is required', pattern: { value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, message: 'Please enter a valid email address' } })} type='email' className={inputStyle} placeholder="Enter your user email" />
               {formState.errors.email && <div className='text-center text-red-500 font-medium text-sm mt-1'>{formState.errors.email.message}</div>}
             </div>
 
             {/* Date of Birth */}
-         <div>
-  <Input 
-    {...register('dateOfBirth', {
-      required: 'your age is required',
-      validate: (value) => {
-        if (!value) return 'your age is required';
-        let currentYear = new Date().getFullYear();
-        let userYear = new Date(value).getFullYear();
-        let userAge = currentYear - userYear;
-        return userAge > 20 || 'age must be more than 20';
-      }
-    })} 
-    // يبدأ كحقل نصي عادي على الموبايل لإظهار الـ placeholder
-    type="text" 
-    placeholder="Date of Birth (dd/mm/yyyy)"
-    aria-label="dateOfBirth" 
-    className="w-full my-1 block" 
-    
-    // عندما يضغط المستخدم عليه (Focus) يتحول فوراً لـ date ويفتح التقويم
-    onFocus={(e) => {
-      e.target.type = 'date';
-      e.target.showPicker?.(); // يفتح التقويم تلقائياً على أندرويد وكروم
-    }}
-    
-    // إذا تركه فارغاً يعود كحقل نصي ليظهر النص مجدداً
-    onBlur={(e) => {
-      if (!e.target.value) {
-        e.target.type = 'text';
-      }
-    }}
-    style={{ colorScheme: 'light' }} 
-  />
-  {formState.errors.dateOfBirth && (
-    <div className='text-center text-red-500 font-medium text-sm mt-1'>
-      {formState.errors.dateOfBirth.message}
-    </div>
-  )}
-</div>
-
+            <div className="flex flex-col text-left">
+              <label htmlFor="dateOfBirth" className="block text-xs font-medium text-gray-400 mb-1 px-1">Date of Birth</label>
+              <input 
+                id="dateOfBirth"
+                {...register('dateOfBirth', {
+                  required: 'your age is required',
+                  validate: (value) => {
+                    if (!value) return 'your age is required';
+                    let currentYear = new Date().getFullYear();
+                    let userYear = new Date(value).getFullYear();
+                    let userAge = currentYear - userYear;
+                    return userAge > 20 || 'age must be more than 20';
+                  }
+                })} 
+                type="date" 
+                className={inputStyle} 
+                style={{ colorScheme: 'dark' }} 
+              />
+              {formState.errors.dateOfBirth && <div className='text-center text-red-500 font-medium text-sm mt-1'>{formState.errors.dateOfBirth.message}</div>}
+            </div>
 
             {/* Gender */}
             <div>
@@ -141,17 +142,19 @@ export default function Register() {
             </div>
 
             {/* Password */}
-            <div>
-              <Input {...register('password', { required: 'password is required', pattern: { value: /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/, message: "Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character." } })} type='password' aria-label="password" className="w-full my-1" placeholder="Enter your user password" />
+            <div className="flex flex-col text-left">
+              <label htmlFor="password" className="text-xs font-medium text-gray-400 mb-1 px-1">Password</label>
+              <input id="password" {...register('password', { required: 'password is required', pattern: { value: /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/, message: "Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character." } })} type='password' className={inputStyle} placeholder="Enter your user password" />
               {formState.errors.password && <div className='text-center text-red-500 font-medium text-sm mt-1'>{formState.errors.password.message}</div>}
             </div>
 
             {/* Confirm Password */}
-            <div>
-              <Input {...register('rePassword', {
+            <div className="flex flex-col text-left">
+              <label htmlFor="rePassword" className="text-xs font-medium text-gray-400 mb-1 px-1">Confirm Password</label>
+              <input id="rePassword" {...register('rePassword', {
                 required: 'please reEnter your password',
                 validate: (value) => value === passwordValue || 'Password and re-password do not match'
-              })} type='password' aria-label="rePassword" className="w-full my-1" placeholder="Repassword" />
+              })} type='password' className={inputStyle} placeholder="Repassword" />
               {formState.errors.rePassword && <div className='text-center text-red-500 font-medium text-sm mt-1'>{formState.errors.rePassword.message}</div>}
             </div>
 
