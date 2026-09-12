@@ -103,8 +103,7 @@ export default function Register() {
               <input id="email" {...register('email', { required: 'email is required', pattern: { value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, message: 'Please enter a valid email address' } })} type='email' className={inputStyle} placeholder="Enter your user email" />
               {formState.errors.email && <div className='text-center text-red-500 font-medium text-sm mt-1'>{formState.errors.email.message}</div>}
             </div>
-
-            {/* Date of Birth */}
+{/* Date of Birth */}
 <div className="flex flex-col text-left">
   <label htmlFor="dateOfBirth" className="text-xs font-medium text-gray-400 mb-1 px-1">Date of Birth</label>
   <input 
@@ -119,12 +118,27 @@ export default function Register() {
         return userAge > 20 || 'age must be more than 20';
       }
     })} 
-    type="date" 
-    /* قمنا بإضافة كلاسات مخصصة تضمن تلوين نصوص وأيقونة التاريخ الافتراضية باللون الأبيض/الرمادي لتظهر بوضوح */
-    className="w-full my-1 block px-3 py-2.5 bg-transparent border border-[#00F2FE]/30 rounded-xl text-white outline-none focus:border-[#12506C] focus:ring-1 focus:ring-[#12506C] transition-all placeholder:text-gray-500 text-left [color-scheme:dark] [&::-webkit-datetime-edit]:text-gray-300 [&::-webkit-calendar-picker-indicator]:invert" 
+    type="text" 
+    placeholder="Select your birth date (dd/mm/yyyy)"
+    className="w-full my-1 block px-3 py-2.5 bg-transparent border border-[#00F2FE]/30 rounded-xl text-white outline-none focus:border-[#12506C] focus:ring-1 focus:ring-[#12506C] transition-all placeholder:text-gray-500 text-left" 
+    style={{ colorScheme: 'dark' }} // الـ style الصحيح يكتب هنا بالأسفل كمكان طبيعي له
+    
+    onFocus={(e) => {
+      e.target.type = 'date';
+      setTimeout(() => {
+        e.target.showPicker?.();
+      }, 100);
+    }}
+    
+    onBlur={(e) => {
+      if (!e.target.value) {
+        e.target.type = 'text';
+      }
+    }}
   />
   {formState.errors.dateOfBirth && <div className='text-center text-red-500 font-medium text-sm mt-1'>{formState.errors.dateOfBirth.message}</div>}
 </div>
+
 
 
             {/* Gender */}
