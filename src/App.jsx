@@ -10,12 +10,12 @@ import { QueryClient , QueryClientProvider } from '@tanstack/react-query'
 import { Toaster } from 'react-hot-toast'
 import { useNetworkState } from 'react-use'
 
-// المكونات الأساسية المشتركة (يُفضل تركها بدون lazy لأنها تظهر فوراً)
+// المكونات الأساسية المشتركة 
 import Layout from './Components/Layout/Layout'
 import Hero from './Components/Hero/Hero'
 import ProtectRoute from './Components/ProtectRoute/ProtectRoute'
 
-// تحميل الصفحات بشكل ديناميكي (Lazy Loading) لتقسيم الكود
+// تحميل الصفحات بشكل ديناميكي (Lazy Loading) 
 const Login = lazy(() => import('./Auth/Login/Login'))
 const Register = lazy(() => import('./Auth/Register/Register'))
 const Profile = lazy(() => import('./Components/Profile/Profile'))
@@ -38,16 +38,16 @@ function App() {
       element: <Layout />, 
       children: [
         { index: true , element: <Hero/> } ,
-        { path: 'login', element: <Suspense fallback={<div className="text-center my-10">Loading...</div>}><Login /></Suspense> },
-        { path: 'register', element: <Suspense fallback={<div className="text-center my-10">Loading...</div>}><Register /></Suspense> },
-        { path: 'change-password', element: <Suspense fallback={<div className="text-center my-10">Loading...</div>}><ChangePassword /></Suspense> },
-        { path: 'home', element: <ProtectRoute><Suspense fallback={<div className="text-center my-10">Loading...</div>}><Home /></Suspense></ProtectRoute> },
-        { path: 'profile', element: <ProtectRoute><Suspense fallback={<div className="text-center my-10">Loading...</div>}><Profile /></Suspense></ProtectRoute> },
-        { path: ':id/profile', element: <ProtectRoute><Suspense fallback={<div className="text-center my-10">Loading...</div>}><UsersProfile /></Suspense></ProtectRoute> },
-        { path: 'post-details/:id', element: <ProtectRoute><Suspense fallback={<div className="text-center my-10">Loading...</div>}><PostDetails /></Suspense></ProtectRoute> },
-        { path: 'edit-profile', element: <ProtectRoute><Suspense fallback={<div className="text-center my-10">Loading...</div>}><EditProfile/></Suspense></ProtectRoute> },
-        { path: 'follow-suggestions', element: <ProtectRoute><Suspense fallback={<div className="text-center my-10">Loading...</div>}><FollowSuggestions/></Suspense></ProtectRoute> },
-        { path: '*', element: <Suspense fallback={<div className="text-center my-10">Loading...</div>}><Notfound /></Suspense> },
+        { path: 'login', element: <Suspense fallback={null}><Login /></Suspense> },
+        { path: 'register', element: <Suspense fallback={null}><Register /></Suspense> },
+        { path: 'change-password', element: <Suspense fallback={null}><ChangePassword /></Suspense> },
+        { path: 'home', element: <ProtectRoute><Suspense fallback={null}><Home /></Suspense></ProtectRoute> },
+        { path: 'profile', element: <ProtectRoute><Suspense fallback={null}><Profile /></Suspense></ProtectRoute> },
+        { path: ':id/profile', element: <ProtectRoute><Suspense fallback={null}><UsersProfile /></Suspense></ProtectRoute> },
+        { path: 'post-details/:id', element: <ProtectRoute><Suspense fallback={null}><PostDetails /></Suspense></ProtectRoute> },
+        { path: 'edit-profile', element: <ProtectRoute><Suspense fallback={null}><EditProfile/></Suspense></ProtectRoute> },
+        { path: 'follow-suggestions', element: <ProtectRoute><Suspense fallback={null}><FollowSuggestions/></Suspense></ProtectRoute> },
+        { path: '*', element: <Suspense fallback={null}><Notfound /></Suspense> },
       ]
     }
   ])
