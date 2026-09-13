@@ -38,16 +38,16 @@ function App() {
       element: <Layout />, 
       children: [
         { index: true , element: <Hero/> } ,
-        { path: 'login', element: <Suspense fallback={null}><Login /></Suspense> },
-        { path: 'register', element: <Suspense fallback={null}><Register /></Suspense> },
-        { path: 'change-password', element: <Suspense fallback={null}><ChangePassword /></Suspense> },
-        { path: 'home', element: <ProtectRoute><Suspense fallback={null}><Home /></Suspense></ProtectRoute> },
-        { path: 'profile', element: <ProtectRoute><Suspense fallback={null}><Profile /></Suspense></ProtectRoute> },
-        { path: ':id/profile', element: <ProtectRoute><Suspense fallback={null}><UsersProfile /></Suspense></ProtectRoute> },
-        { path: 'post-details/:id', element: <ProtectRoute><Suspense fallback={null}><PostDetails /></Suspense></ProtectRoute> },
-        { path: 'edit-profile', element: <ProtectRoute><Suspense fallback={null}><EditProfile/></Suspense></ProtectRoute> },
-        { path: 'follow-suggestions', element: <ProtectRoute><Suspense fallback={null}><FollowSuggestions/></Suspense></ProtectRoute> },
-        { path: '*', element: <Suspense fallback={null}><Notfound /></Suspense> },
+        { path: 'login', element: <Suspense fallback={<div className='h-screen bg-[#1A0B2E] text-[#00F2FE] w-screen flex items-center justify-center'>Loading...</div>}><Login /></Suspense> },
+        { path: 'register', element: <Suspense fallback={<div className='h-screen bg-[#1A0B2E] text-[#00F2FE] w-screen flex items-center justify-center'>Loading...</div>}><Register /></Suspense> },
+        { path: 'change-password', element: <Suspense fallback={<div className='h-screen bg-[#1A0B2E] text-[#00F2FE] w-screen flex items-center justify-center'>Loading...</div>}><ChangePassword /></Suspense> },
+        { path: 'home', element: <ProtectRoute><Suspense fallback={<div className='h-screen bg-[#1A0B2E] text-[#00F2FE] w-screen flex items-center justify-center'>Loading...</div>}><Home /></Suspense></ProtectRoute> },
+        { path: 'profile', element: <ProtectRoute><Suspense fallback={<div className='h-screen bg-[#1A0B2E] text-[#00F2FE] w-screen flex items-center justify-center'>Loading...</div>}><Profile /></Suspense></ProtectRoute> },
+        { path: ':id/profile', element: <ProtectRoute><Suspense fallback={<div className='h-screen bg-[#1A0B2E] text-[#00F2FE] w-screen flex items-center justify-center'>Loading...</div>}><UsersProfile /></Suspense></ProtectRoute> },
+        { path: 'post-details/:id', element: <ProtectRoute><Suspense fallback={<div className='h-screen bg-[#1A0B2E] text-[#00F2FE] w-screen flex items-center justify-center'>Loading...</div>}><PostDetails /></Suspense></ProtectRoute> },
+        { path: 'edit-profile', element: <ProtectRoute><Suspense fallback={<div className='h-screen bg-[#1A0B2E] text-[#00F2FE] w-screen flex items-center justify-center'>Loading...</div>}><EditProfile/></Suspense></ProtectRoute> },
+        { path: 'follow-suggestions', element: <ProtectRoute><Suspense fallback={<div className='h-screen bg-[#1A0B2E] text-[#00F2FE] w-screen flex items-center justify-center'>Loading...</div>}><FollowSuggestions/></Suspense></ProtectRoute> },
+        { path: '*', element: <Suspense fallback={<div className='h-screen bg-[#1A0B2E] text-[#00F2FE] w-screen flex items-center justify-center'>Loading...</div>}><Notfound /></Suspense> },
       ]
     }
   ])
